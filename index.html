@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Memory Sequence</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Dark Theme Defaults */
+            --bg-color: #0f1014;
+            --panel-bg: #181a20;
+            --text-color: #ffffff;
+            --text-sub: #8b92a3;
+            --grid-gap: 16px;
+            --tile-size: 100px;
+            --lose-red: #ff4757;
+            --overlay-bg: rgba(15, 16, 20, 0.85);
+
+            /* Tile Base Opacity */
+            --tile-base-opacity: 0.25;
+            --tile-hover-opacity: 0.6;
+        }
+
+        [data-theme="light"] {
+            --bg-color: #f0f2f5;
+            --panel-bg: #ffffff;
+            --text-color: #1a1c22;
+            --text-sub: #5e6676;
+            --overlay-bg: rgba(255, 255, 255, 0.85);
+            --tile-base-opacity: 0.3;
+            --tile-hover-opacity: 0.7;
+        }
+
+        /* Colorful Tiles Palette */
+        :root {
+            --color-0: #ff4757;
+            /* Red */
+            --color-1: #ffa502;
+            /* Orange */
+            --color-2: #eccc68;
+            /* Yellow */
+            --color-3: #2ed573;
+            /* Green */
+            --color-4: #1e90ff;
+            /* Blue */
+            --color-5: #3742fa;
+            /* Deep Blue */
+            --color-6: #a55eea;
+            /* Purple */
+            --color-7: #ff7f50;
+            /* Coral */
+            --color-8: #ff6b81;
+            /* Pink */
+        }
+
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-main, 'Inter', sans-serif);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow: hidden;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            touch-action: none;
+        }
+
+        h1 {
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .stats-container {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            font-weight: 600;
+            font-size: 1.2rem;
+            color: var(--text-sub);
+        }
+
+        .stat-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.7;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            color: var(--text-color);
+        }
+
+        .game-wrapper {
+            position: relative;
+        }
+
+        .game-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--grid-gap);
+            padding: 20px;
+            background: var(--panel-bg);
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.3s ease, box-shadow 0.3s;
+            touch-action: none;
+        }
+
+        .tile {
+            width: var(--tile-size);
+            height: var(--tile-size);
+            background-color: var(--tile-color);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.15s ease-out;
+            position: relative;
+            overflow: hidden;
+            opacity: var(--tile-base-opacity);
+        }
+
+        /* Assign Colors */
+        .tile:nth-child(1) {
+            --tile-color: var(--color-0);
+            background-color: var(--tile-color);
+        }
+
+        .tile:nth-child(2) {
+            --tile-color: var(--color-1);
+            background-color: var(--tile-color);
+        }
+
+        .tile:nth-child(3) {
+            --tile-color: var(--color-2);
+            background-color: var(--tile-color);
+        }
+
+        .tile:nth-child(4) {
+            --tile-color: var(--color-3);
+            background-color: var(--tile-color);
+        }
+
+        .tile:nth-child(5) {
+            --tile-color: var(--color-4);
+            background-color: var(--tile-color);
+        }
+
+        .tile:nth-child(6) {
+            --tile-color: var(--color-5);
+            background-color: var(--tile-color);
+        }
+
+        .tile:nth-child(7) {
+            --tile-color: var(--color-6);
+            background-color: var(--tile-color);
+        }
+
+        .tile:nth-child(8) {
+            --tile-color: var(--color-7);
+            background-color: var(--tile-color);
+        }
+
+        .tile:nth-child(9) {
+            --tile-color: var(--color-8);
+            background-color: var(--tile-color);
+        }
+
+        /* Realistic Hover Effect - Bright glow + shadow */
+        .game-container.interactive .tile:hover {
+            opacity: var(--tile-hover-opacity);
+            transform: scale(1.03) translateY(-2px);
+            box-shadow:
+                0 8px 20px rgba(0, 0, 0, 0.3),
+                0 0 15px color-mix(in srgb, var(--tile-color) 50%, transparent);
+        }
+
+        .game-container.interactive .tile:active {
+            transform: scale(0.95);
+            opacity: 0.9;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Active/Lit state */
+        .tile.active {
+            opacity: 1 !important;
+            box-shadow:
+                0 0 40px var(--tile-color),
+                0 0 80px color-mix(in srgb, var(--tile-color) 60%, transparent);
+            transform: scale(1.08);
+            z-index: 10;
+        }
+
+        /* Flash white center reflection */
+        .tile::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.5) 0%, transparent 50%);
+            opacity: 0;
+            transition: opacity 0.1s;
+            pointer-events: none;
+        }
+
+        .tile.active::after {
+            opacity: 1;
+        }
+
+        /* Hover shimmer effect */
+        .game-container.interactive .tile::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            right: 0;
+            bottom: 0;
+            width: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.4s ease;
+            pointer-events: none;
+        }
+
+        .game-container.interactive .tile:hover::before {
+            left: 100%;
+        }
+
+        .shake {
+            animation: shake 0.5s cubic-bezier(.36, .07, .19, .97) both;
+        }
+
+        @keyframes shake {
+
+            10%,
+            90% {
+                transform: translate3d(-1px, 0, 0);
+            }
+
+            20%,
+            80% {
+                transform: translate3d(2px, 0, 0);
+            }
+
+            30%,
+            50%,
+            70% {
+                transform: translate3d(-4px, 0, 0);
+            }
+
+            40%,
+            60% {
+                transform: translate3d(4px, 0, 0);
+            }
+        }
+
+        .game-container.lose {
+            box-shadow: 0 0 30px var(--lose-red);
+            border: 1px solid var(--lose-red);
+        }
+
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--overlay-bg);
+            backdrop-filter: blur(8px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            border-radius: 20px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s, background-color 0.3s;
+        }
+
+        .overlay.visible {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .btn {
+            background: var(--text-color);
+            color: var(--bg-color);
+            border: none;
+            padding: 12px 32px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 1rem;
+            touch-action: manipulation;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .message {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+        }
+
+        .sub-message {
+            color: var(--text-sub);
+            margin-bottom: 1.5rem;
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--panel-bg);
+            border: none;
+            color: var(--text-color);
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            font-size: 1.2rem;
+            transition: transform 0.2s, background-color 0.3s, color 0.3s;
+            z-index: 200;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        /* Sound Toggle */
+        .sound-toggle {
+            position: absolute;
+            top: 20px;
+            right: 70px;
+            background: var(--panel-bg);
+            border: none;
+            color: var(--text-color);
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            font-size: 1.2rem;
+            transition: transform 0.2s, background-color 0.3s, color 0.3s;
+            z-index: 200;
+        }
+
+        .sound-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .sound-toggle.muted {
+            opacity: 0.5;
+        }
+
+        @media (max-width: 450px) {
+            :root {
+                --tile-size: 85px;
+                --grid-gap: 12px;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .stats-container {
+                margin-bottom: 1.5rem;
+                gap: 1.5rem;
+            }
+        }
+
+        @media (max-width: 360px) {
+            :root {
+                --tile-size: 70px;
+                --grid-gap: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <button class="sound-toggle" id="sound-btn" aria-label="Toggle Sound">
+        🔊
+    </button>
+    <button class="theme-toggle" id="theme-btn" aria-label="Toggle Theme">
+        ☀️
+    </button>
+
+    <h1>Sequence Memory</h1>
+    <div class="stats-container">
+        <div class="stat-box">
+            <span class="stat-label">Level</span>
+            <span class="stat-value" id="level-display">1</span>
+        </div>
+        <div class="stat-box">
+            <span class="stat-label">Max Score</span>
+            <span class="stat-value" id="highscore-display">0</span>
+        </div>
+    </div>
+
+    <div class="game-wrapper">
+        <div class="game-container" id="game-container">
+            <!-- 9 tiles -->
+            <div class="tile" data-index="0"></div>
+            <div class="tile" data-index="1"></div>
+            <div class="tile" data-index="2"></div>
+            <div class="tile" data-index="3"></div>
+            <div class="tile" data-index="4"></div>
+            <div class="tile" data-index="5"></div>
+            <div class="tile" data-index="6"></div>
+            <div class="tile" data-index="7"></div>
+            <div class="tile" data-index="8"></div>
+
+            <div class="overlay visible" id="overlay">
+                <div class="message" id="overlay-title">Ready?</div>
+                <div class="sub-message" id="overlay-sub">Click start to begin</div>
+                <button class="btn" id="start-btn">Start Game</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Game State
+        const state = {
+            sequence: [],
+            playerSequence: [],
+            level: 1,
+            maxScore: 0,
+            isPlaying: false,
+            isGameOver: false,
+            isWaitingInput: false,
+            theme: 'dark',
+            soundEnabled: true
+        };
+
+        // DOM Elements
+        const container = document.getElementById('game-container');
+        const tiles = Array.from(document.querySelectorAll('.tile'));
+        const levelDisplay = document.getElementById('level-display');
+        const highScoreDisplay = document.getElementById('highscore-display');
+        const overlay = document.getElementById('overlay');
+        const overlayTitle = document.getElementById('overlay-title');
+        const overlaySub = document.getElementById('overlay-sub');
+        const startBtn = document.getElementById('start-btn');
+        const themeBtn = document.getElementById('theme-btn');
+        const soundBtn = document.getElementById('sound-btn');
+        const html = document.documentElement;
+
+        // Audio Context
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+
+        function getAudioContext() {
+            if (!audioCtx) {
+                audioCtx = new AudioContext();
+            }
+            return audioCtx;
+        }
+
+        function playTone(freq = 440, type = 'sine', duration = 0.15, volume = 0.12) {
+            if (!state.soundEnabled) return;
+
+            const ctx = getAudioContext();
+            if (ctx.state === 'suspended') {
+                ctx.resume();
+            }
+
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+
+            osc.frequency.setValueAtTime(freq, ctx.currentTime);
+            osc.type = type;
+
+            gain.gain.setValueAtTime(volume, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+
+            osc.start();
+            osc.stop(ctx.currentTime + duration);
+        }
+
+        // Hover sound - subtle tick
+        function playHoverSound() {
+            if (!state.soundEnabled) return;
+            playTone(800, 'sine', 0.03, 0.03);
+        }
+
+        // Click sound - satisfying click
+        function playClickSound() {
+            if (!state.soundEnabled) return;
+            playTone(600, 'triangle', 0.08, 0.08);
+        }
+
+        // Success sound - ascending chime
+        function playSuccessSound() {
+            if (!state.soundEnabled) return;
+            playTone(523, 'sine', 0.1, 0.1);
+            setTimeout(() => playTone(659, 'sine', 0.1, 0.1), 100);
+            setTimeout(() => playTone(784, 'sine', 0.15, 0.1), 200);
+        }
+
+        // Level up sound
+        function playLevelUpSound() {
+            if (!state.soundEnabled) return;
+            playTone(440, 'sine', 0.1, 0.08);
+            setTimeout(() => playTone(554, 'sine', 0.1, 0.08), 80);
+            setTimeout(() => playTone(659, 'sine', 0.15, 0.08), 160);
+        }
+
+        // Tones for tiles (pentatonic scale)
+        const tones = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25, 587.33, 659.25, 783.99];
+
+        // Init Theme & High Score & Sound
+        function init() {
+            // Theme
+            const savedTheme = localStorage.getItem('mem-theme') || 'dark';
+            state.theme = savedTheme;
+            html.setAttribute('data-theme', state.theme);
+            themeBtn.textContent = state.theme === 'dark' ? '☀️' : '🌙';
+
+            // High Score
+            const savedScore = localStorage.getItem('mem-highscore') || 0;
+            state.maxScore = parseInt(savedScore);
+            highScoreDisplay.textContent = state.maxScore;
+
+            // Sound
+            const savedSound = localStorage.getItem('mem-sound');
+            state.soundEnabled = savedSound !== 'false';
+            updateSoundButton();
+        }
+
+        function updateSoundButton() {
+            soundBtn.textContent = state.soundEnabled ? '🔊' : '🔇';
+            soundBtn.classList.toggle('muted', !state.soundEnabled);
+        }
+
+        function toggleTheme() {
+            state.theme = state.theme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', state.theme);
+            themeBtn.textContent = state.theme === 'dark' ? '☀️' : '🌙';
+            localStorage.setItem('mem-theme', state.theme);
+            playClickSound();
+        }
+
+        function toggleSound() {
+            state.soundEnabled = !state.soundEnabled;
+            localStorage.setItem('mem-sound', state.soundEnabled);
+            updateSoundButton();
+            if (state.soundEnabled) {
+                playClickSound();
+            }
+        }
+
+        themeBtn.addEventListener('click', toggleTheme);
+        soundBtn.addEventListener('click', toggleSound);
+
+        // Core Game Functions
+        function startGame() {
+            state.sequence = [];
+            state.level = 1;
+            state.isGameOver = false;
+            updateUI();
+            hideOverlay();
+            playClickSound();
+            nextLevel();
+        }
+
+        function nextLevel() {
+            state.playerSequence = [];
+            state.isWaitingInput = false;
+            container.classList.remove('interactive');
+
+            const randomTile = Math.floor(Math.random() * 9);
+            state.sequence.push(randomTile);
+
+            updateUI();
+
+            setTimeout(() => {
+                playSequence();
+            }, 500);
+        }
+
+        async function playSequence() {
+            state.isPlaying = true;
+            container.classList.remove('interactive');
+
+            for (let i = 0; i < state.sequence.length; i++) {
+                const tileIndex = state.sequence[i];
+                await activateTile(tileIndex);
+                await new Promise(r => setTimeout(r, 150));
+            }
+
+            state.isPlaying = false;
+            state.isWaitingInput = true;
+            container.classList.add('interactive');
+        }
+
+        function activateTile(index) {
+            return new Promise(resolve => {
+                const tile = tiles[index];
+                tile.classList.add('active');
+                playTone(tones[index], 'sine', 0.25, 0.12);
+
+                setTimeout(() => {
+                    tile.classList.remove('active');
+                    resolve();
+                }, 300);
+            });
+        }
+
+        function handleInput(index) {
+            if (state.isPlaying || !state.isWaitingInput || state.isGameOver) return;
+
+            const tile = tiles[index];
+            tile.classList.add('active');
+            playTone(tones[index], 'triangle', 0.12, 0.1);
+            setTimeout(() => tile.classList.remove('active'), 150);
+
+            state.playerSequence.push(index);
+
+            const currentStep = state.playerSequence.length - 1;
+            if (state.playerSequence[currentStep] !== state.sequence[currentStep]) {
+                gameOver();
+                return;
+            }
+
+            if (state.playerSequence.length === state.sequence.length) {
+                // Check Max Score
+                if (state.level > state.maxScore) {
+                    state.maxScore = state.level;
+                    localStorage.setItem('mem-highscore', state.maxScore);
+                    highScoreDisplay.textContent = state.maxScore;
+                }
+
+                playLevelUpSound();
+                state.isWaitingInput = false;
+                state.level++;
+                updateUI();
+                container.classList.remove('interactive');
+                setTimeout(nextLevel, 800);
+            }
+        }
+
+        function gameOver() {
+            state.isGameOver = true;
+            state.isWaitingInput = false;
+            container.classList.remove('interactive');
+            container.classList.add('lose');
+            container.classList.add('shake');
+
+            playTone(150, 'sawtooth', 0.4, 0.15);
+
+            setTimeout(() => {
+                container.classList.remove('shake');
+                container.classList.remove('lose');
+                showOverlay('Game Over', `Score: ${state.level - 1}`, 'Try Again');
+            }, 600);
+        }
+
+        function updateUI() {
+            levelDisplay.textContent = state.level;
+        }
+
+        function showOverlay(title, sub, btnText) {
+            overlayTitle.textContent = title;
+            overlaySub.textContent = sub;
+            startBtn.textContent = btnText;
+            overlay.classList.add('visible');
+        }
+
+        function hideOverlay() {
+            overlay.classList.remove('visible');
+        }
+
+        // Input Handling (Mouse & Touch)
+        tiles.forEach(tile => {
+            const idx = parseInt(tile.getAttribute('data-index'));
+
+            // Hover sound
+            tile.addEventListener('mouseenter', () => {
+                if (state.isWaitingInput && !state.isPlaying && !state.isGameOver) {
+                    playHoverSound();
+                }
+            });
+
+            // Fast tap response
+            tile.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                handleInput(idx);
+            }, { passive: false });
+
+            // Mouse click
+            tile.addEventListener('mousedown', (e) => {
+                handleInput(idx);
+            });
+        });
+
+        startBtn.addEventListener('click', startGame);
+        startBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            startGame();
+        }, { passive: false });
+
+        // Run Init
+        init();
+
+    </script>
+</body>
+
+</html>
