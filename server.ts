@@ -3,7 +3,8 @@ import { readFileSync } from "fs";
 import { join } from "path";
 import { Database } from "bun:sqlite";
 
-// Load HTML dynamically
+// Load HTML once at startup
+const html = readFileSync(join(import.meta.dir, "index.html"), "utf-8");
 
 // Database Setup
 const db = new Database("scores.db", { create: true });
@@ -88,7 +89,7 @@ class ScoreStore {
 const store = new ScoreStore();
 
 new Elysia()
-    .get("/memorygame", () => new Response(Bun.file(join(import.meta.dir, "index.html")), {
+    .get("/memorygame", () => new Response(html, {
         headers: { "Content-Type": "text/html" }
     }))
     .get("/api/scores", () => store.getTop(100))
