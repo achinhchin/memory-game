@@ -343,11 +343,23 @@
             background: var(--panel-bg);
             border: none;
             color: var(--text-color);
-            padding: 10px;
+            width: 44px;
+            height: 44px;
+            min-width: 44px;
+            min-height: 44px;
+            max-width: 44px;
+            max-height: 44px;
+            padding: 0;
+            margin: 0;
+            appearance: none;
+            -webkit-appearance: none;
             border-radius: 50%;
             cursor: pointer;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             font-size: 1.2rem;
+            line-height: 44px;
+            text-align: center;
+            overflow: hidden;
             transition: transform 0.2s, background-color 0.3s, color 0.3s;
             z-index: 200;
         }
@@ -364,11 +376,23 @@
             background: var(--panel-bg);
             border: none;
             color: var(--text-color);
-            padding: 10px;
+            width: 44px;
+            height: 44px;
+            min-width: 44px;
+            min-height: 44px;
+            max-width: 44px;
+            max-height: 44px;
+            padding: 0;
+            margin: 0;
+            appearance: none;
+            -webkit-appearance: none;
             border-radius: 50%;
             cursor: pointer;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             font-size: 1.2rem;
+            line-height: 44px;
+            text-align: center;
+            overflow: hidden;
             transition: transform 0.2s, background-color 0.3s, color 0.3s;
             z-index: 200;
         }
@@ -379,6 +403,43 @@
 
         .sound-toggle.muted {
             opacity: 0.5;
+        }
+
+        /* Scoreboard Toggle */
+        .score-toggle {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--text-color);
+            width: 44px;
+            height: 44px;
+            min-width: 44px;
+            min-height: 44px;
+            max-width: 44px;
+            max-height: 44px;
+            padding: 0;
+            margin: 0;
+            appearance: none;
+            -webkit-appearance: none;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            font-size: 1.2rem;
+            line-height: 42px;
+            /* Slightly less to account for border */
+            text-align: center;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 200;
+        }
+
+        .score-toggle:hover {
+            transform: scale(1.1) rotate(10deg);
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
         }
 
         @media (max-width: 450px) {
@@ -430,21 +491,143 @@
             animation: shake 0.4s;
         }
 
-        .scoreboard {
-            margin-top: 2rem;
+        /* Scoreboard Overlay */
+        .scoreboard-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            max-width: 400px;
-            background: var(--panel-bg);
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            z-index: 300;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
         }
 
-        .scoreboard h2 {
-            margin: 0 0 1rem 0;
-            text-align: center;
-            font-size: 1.3rem;
-            opacity: 0.9;
+        .scoreboard-overlay.visible {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .scoreboard-modal {
+            background: rgba(20, 20, 25, 0.85);
+            width: 90%;
+            max-width: 450px;
+            max-height: 80vh;
+            border-radius: 24px;
+            padding: 2.5rem;
+            box-shadow:
+                0 20px 60px rgba(0, 0, 0, 0.6),
+                0 0 0 1px rgba(255, 255, 255, 0.1),
+                inset 0 0 40px rgba(255, 255, 255, 0.02);
+            display: flex;
+            flex-direction: column;
+            transform: scale(0.9) translateY(20px);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        .scoreboard-overlay.visible .scoreboard-modal {
+            transform: scale(1) translateY(0);
+            opacity: 1;
+            animation: modalBounce 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes modalBounce {
+            0% {
+                transform: scale(0.8) translateY(30px);
+                opacity: 0;
+            }
+
+            50% {
+                transform: scale(1.03) translateY(-5px);
+            }
+
+            100% {
+                transform: scale(1) translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .scoreboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .scoreboard-header h2 {
+            margin: 0;
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff, #a5b4fc, #fff);
+            background-size: 200% 100%;
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shimmer 3s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+
+            0%,
+            100% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        .close-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: var(--text-color);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(90deg);
+        }
+
+        .score-list-container {
+            overflow-y: auto;
+            flex-grow: 1;
+            min-height: 200px;
+            padding-right: 10px;
+            /* Scrollbar styling */
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+        }
+
+        .score-list-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .score-list-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .score-list-container::-webkit-scrollbar-thumb {
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
         }
 
         .score-list {
@@ -455,37 +638,228 @@
 
         .score-item {
             display: flex;
+            align-items: center;
             justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            font-size: 1rem;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 1.05rem;
+            transition: transform 0.2s, background 0.2s;
+            /* Entry Animation */
+            opacity: 0;
+            transform: translateX(-20px);
+            animation: slideIn 0.4s cubic-bezier(0.19, 1, 0.22, 1) forwards;
         }
 
-        .score-item:last-child {
-            border-bottom: none;
+
+        @keyframes slideIn {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
+
+        .score-item:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Current Player Highlight - Card Background Only */
+        .score-item.current-player {
+            display: flex !important;
+            visibility: visible !important;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.4), rgba(236, 72, 153, 0.3)) !important;
+            border: 2px solid rgb(168, 85, 247) !important;
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.5) !important;
+        }
+
+        /* Ensure child elements remain visible with default colors */
+        .score-item.current-player .score-name,
+        .score-item.current-player .score-rank,
+        .score-item.current-player .score-val {
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+
 
         .score-rank {
-            width: 25px;
-            color: var(--text-sub);
-            font-weight: 600;
+            width: 40px;
+            font-weight: 700;
+            opacity: 0.5;
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* Top 3 Ranks */
+        .score-item:nth-child(1) .score-rank {
+            color: #ffd700;
+            opacity: 1;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+
+        .score-item:nth-child(2) .score-rank {
+            color: #c0c0c0;
+            opacity: 1;
+        }
+
+        .score-item:nth-child(3) .score-rank {
+            color: #cd7f32;
+            opacity: 1;
+        }
+
+        .score-item:nth-child(1) {
+            background: linear-gradient(90deg, rgba(255, 215, 0, 0.15), rgba(255, 255, 255, 0.03));
+            border-color: rgba(255, 215, 0, 0.4);
+            animation: slideIn 0.4s cubic-bezier(0.19, 1, 0.22, 1) forwards, goldGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes goldGlow {
+
+            0%,
+            100% {
+                box-shadow: 0 0 5px rgba(255, 215, 0, 0.2), inset 0 0 10px rgba(255, 215, 0, 0.05);
+            }
+
+            50% {
+                box-shadow: 0 0 20px rgba(255, 215, 0, 0.4), inset 0 0 15px rgba(255, 215, 0, 0.1);
+            }
+        }
+
+        .score-item:nth-child(2) {
+            background: linear-gradient(90deg, rgba(192, 192, 192, 0.15), rgba(255, 255, 255, 0.03));
+            border-color: rgba(192, 192, 192, 0.3);
+            animation: slideIn 0.4s cubic-bezier(0.19, 1, 0.22, 1) forwards, silverGlow 2.5s ease-in-out infinite;
+        }
+
+        @keyframes silverGlow {
+
+            0%,
+            100% {
+                box-shadow: 0 0 5px rgba(192, 192, 192, 0.2);
+            }
+
+            50% {
+                box-shadow: 0 0 15px rgba(192, 192, 192, 0.35);
+            }
+        }
+
+        .score-item:nth-child(3) {
+            background: linear-gradient(90deg, rgba(205, 127, 50, 0.15), rgba(255, 255, 255, 0.03));
+            border-color: rgba(205, 127, 50, 0.3);
+            animation: slideIn 0.4s cubic-bezier(0.19, 1, 0.22, 1) forwards, bronzeGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes bronzeGlow {
+
+            0%,
+            100% {
+                box-shadow: 0 0 5px rgba(205, 127, 50, 0.2);
+            }
+
+            50% {
+                box-shadow: 0 0 15px rgba(205, 127, 50, 0.35);
+            }
         }
 
         .score-name {
             flex-grow: 1;
             font-weight: 600;
+            letter-spacing: 0.5px;
         }
 
         .score-val {
             font-weight: 800;
             color: var(--color-3);
-            /* Greenish for score */
+            font-family: monospace;
+            font-size: 1.2rem;
+        }
+
+        /* Light Mode Overrides for Scoreboard (End of block for specificity) */
+        body.light-theme .scoreboard-overlay {
+            background: rgba(200, 200, 255, 0.4) !important;
+        }
+
+        body.light-theme .scoreboard-modal {
+            background: rgba(255, 255, 255, 0.95) !important;
+            box-shadow:
+                0 20px 60px rgba(0, 0, 0, 0.15),
+                0 0 0 1px rgba(0, 0, 0, 0.05),
+                inset 0 0 40px rgba(255, 255, 255, 0.5) !important;
+            border-color: rgba(255, 255, 255, 0.8) !important;
+            color: #111 !important;
+        }
+
+        body.light-theme .scoreboard-header h2 {
+            background: linear-gradient(135deg, #4f46e5, #9333ea) !important;
+            -webkit-background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+            text-shadow: none !important;
+        }
+
+        body.light-theme .close-btn {
+            color: #666 !important;
+            background: rgba(0, 0, 0, 0.05) !important;
+        }
+
+        body.light-theme .close-btn:hover {
+            color: #000 !important;
+            background: rgba(0, 0, 0, 0.1) !important;
+        }
+
+        /* Beat specificity of nth-child */
+        body.light-theme .score-item,
+        body.light-theme .score-item:nth-child(n) {
+            background: rgba(0, 0, 0, 0.05) !important;
+            border-color: rgba(0, 0, 0, 0.1) !important;
+            color: #111 !important;
+        }
+
+        body.light-theme .score-item:hover,
+        body.light-theme .score-item:nth-child(n):hover {
+            background: rgba(0, 0, 0, 0.08) !important;
+        }
+
+        body.light-theme .score-rank {
+            color: #666 !important;
+        }
+
+        /* Keep Top 3 Ranks Gold/Silver/Bronze colors but ensure text is readable if needed */
+
+        body.light-theme .score-val {
+            color: #16a34a !important;
+            /* darker green for white bg */
+            font-weight: 800 !important;
+        }
+
+        body.light-theme .score-toggle {
+            background: rgba(255, 255, 255, 0.9) !important;
+            border-color: rgba(0, 0, 0, 0.1) !important;
+            color: #333 !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+            /* Enforce Circle Shape */
+            width: 44px !important;
+            height: 44px !important;
+            padding: 0 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            border-radius: 50% !important;
+        }
+
+        body.light-theme .score-toggle:hover {
+            background: #fff !important;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15) !important;
+            transform: scale(1.1) rotate(10deg);
         }
     </style>
 </head>
 
 <body>
 
+    <button class="score-toggle" id="score-toggle-btn" aria-label="Toggle Scoreboard">
+        🏆
+    </button>
     <button class="sound-toggle" id="sound-btn" aria-label="Toggle Sound">
         🔊
     </button>
@@ -529,12 +903,19 @@
     </div>
 
     <!-- Scoreboard Section -->
-    <div class="scoreboard" id="scoreboard">
-        <h2>Top Players</h2>
-        <ul class="score-list" id="score-list">
-            <!-- Items injected by JS -->
-            <li class="score-item" style="justify-content:center; opacity:0.6;">Loading...</li>
-        </ul>
+    <div class="scoreboard-overlay" id="scoreboard-overlay">
+        <div class="scoreboard-modal">
+            <div class="scoreboard-header">
+                <h2>Top Players</h2>
+                <button class="close-btn" id="close-score-btn">&times;</button>
+            </div>
+            <div class="score-list-container">
+                <ul class="score-list" id="score-list">
+                    <!-- Items injected by JS -->
+                    <li class="score-item" style="justify-content:center; opacity:0.6;">Loading...</li>
+                </ul>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -565,16 +946,35 @@
         const scoreList = document.getElementById('score-list');
         const themeBtn = document.getElementById('theme-btn');
         const soundBtn = document.getElementById('sound-btn');
+        const scoreToggleBtn = document.getElementById('score-toggle-btn');
+        const scoreboardOverlay = document.getElementById('scoreboard-overlay');
+        const closeScoreBtn = document.getElementById('close-score-btn');
         const html = document.documentElement;
 
+        // Intervals
+        let pollInterval = null;
+
         // Audio Context
+        // Audio Context & Autoplay Fix
         const AudioContext = window.AudioContext || window.webkitAudioContext;
-        let audioCtx = null;
+        let audioCtx = new AudioContext();
+
+        function resumeAudio() {
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            // Remove listeners once resumed
+            document.removeEventListener('click', resumeAudio);
+            document.removeEventListener('keydown', resumeAudio);
+            document.removeEventListener('touchstart', resumeAudio);
+        }
+
+        // Add listeners for any interaction
+        document.addEventListener('click', resumeAudio);
+        document.addEventListener('keydown', resumeAudio);
+        document.addEventListener('touchstart', resumeAudio);
 
         function getAudioContext() {
-            if (!audioCtx) {
-                audioCtx = new AudioContext();
-            }
             return audioCtx;
         }
 
@@ -638,7 +1038,8 @@
             // Theme
             const savedTheme = localStorage.getItem('mem-theme') || 'dark';
             state.theme = savedTheme;
-            html.setAttribute('data-theme', state.theme);
+            document.documentElement.setAttribute('data-theme', state.theme);
+            document.body.classList.toggle('light-theme', state.theme === 'light');
             themeBtn.textContent = state.theme === 'dark' ? '☀️' : '🌙';
 
             // High Score
@@ -659,7 +1060,8 @@
 
         function toggleTheme() {
             state.theme = state.theme === 'dark' ? 'light' : 'dark';
-            html.setAttribute('data-theme', state.theme);
+            document.documentElement.setAttribute('data-theme', state.theme);
+            document.body.classList.toggle('light-theme', state.theme === 'light');
             themeBtn.textContent = state.theme === 'dark' ? '☀️' : '🌙';
             localStorage.setItem('mem-theme', state.theme);
             playClickSound();
@@ -678,30 +1080,103 @@
         soundBtn.addEventListener('click', toggleSound);
 
         // Scoreboard Functions
-        async function fetchScores() {
-            try {
-                const res = await fetch('/api/scores');
-                const scores = await res.json();
-                renderScores(scores);
-            } catch (e) {
-                console.error("Failed to fetch scores", e);
+        function toggleScoreboard() {
+            const isVisible = scoreboardOverlay.classList.contains('visible');
+            if (isVisible) {
+                // Hide
+                scoreboardOverlay.classList.remove('visible');
+                stopPolling();
+            } else {
+                // Show
+                scoreboardOverlay.classList.add('visible');
+                fetchScores(true); // Fetch immediate, WITH animation
+                startPolling();
             }
         }
 
-        function renderScores(scores) {
+        function startPolling() {
+            if (pollInterval) clearInterval(pollInterval);
+            pollInterval = setInterval(() => fetchScores(false), 2000); // Poll WITHOUT animation
+        }
+
+        function stopPolling() {
+            if (pollInterval) clearInterval(pollInterval);
+            pollInterval = null;
+        }
+
+        scoreToggleBtn.addEventListener('click', toggleScoreboard);
+        closeScoreBtn.addEventListener('click', () => {
+            scoreboardOverlay.classList.remove('visible');
+            stopPolling();
+        });
+
+        // Close on outside click
+        scoreboardOverlay.addEventListener('click', (e) => {
+            if (e.target === scoreboardOverlay) {
+                scoreboardOverlay.classList.remove('visible');
+                stopPolling();
+            }
+        });
+
+        async function fetchScores(isInitial = false) {
+            try {
+                const res = await fetch('/api/scores');
+                const scores = await res.json();
+                renderScores(scores, isInitial);
+            } catch (e) {
+                // Silent fail for polling
+            }
+        }
+
+        let lastScoreData = '';
+        function renderScores(scores, shouldAnimate = false) {
+            // Optimization: Skip re-render if data is identical AND not forcing animation (initial load)
+            const currentData = JSON.stringify(scores);
+            if (!shouldAnimate && currentData === lastScoreData) {
+                return;
+            }
+            lastScoreData = currentData;
+
             scoreList.innerHTML = '';
             if (scores.length === 0) {
-                scoreList.innerHTML = '<li class="score-item" style="justify-content:center; opacity:0.6;">No scores yet</li>';
+                scoreList.innerHTML = '<li class="score-item" style="justify-content:center; opacity:0.6; animation:none;">No scores yet</li>';
                 return;
             }
             scores.forEach((s, i) => {
                 const li = document.createElement('li');
                 li.className = 'score-item';
-                li.innerHTML = `
-                    <span class="score-rank">#${i + 1}</span>
-                    <span class="score-name">${s.name}</span>
-                    <span class="score-val">${s.score}</span>
-                `;
+
+                // Highlight current player's entries
+                const currentPlayerName = usernameInput.value.trim().toLowerCase();
+                if (s.name.toLowerCase() === currentPlayerName && currentPlayerName !== '') {
+                    li.classList.add('current-player');
+                }
+
+                // Only animate if requested (initial load)
+                if (shouldAnimate) {
+                    li.style.animationDelay = `${i * 0.03}s`;
+                } else {
+                    li.style.animation = 'none';
+                    li.style.opacity = '1';
+                    li.style.transform = 'translateY(0)';
+                }
+
+                const rankSpan = document.createElement('span');
+                rankSpan.className = 'score-rank';
+                rankSpan.textContent = i + 1;
+
+                const nameSpan = document.createElement('span');
+                nameSpan.className = 'score-name';
+                nameSpan.textContent = s.name; // Secure XSS Fix
+
+                const valSpan = document.createElement('span');
+                valSpan.className = 'score-val';
+                valSpan.textContent = s.score;
+
+                li.appendChild(rankSpan);
+                li.appendChild(nameSpan);
+                li.appendChild(valSpan);
+
                 scoreList.appendChild(li);
             });
         }
@@ -890,7 +1365,7 @@
 
         // Run Init
         init();
-        fetchScores();
+        // fetchScores(); // No auto-fetch on load, only on open
 
     </script>
 </body>
