@@ -39,9 +39,24 @@ class ScoreStore {
     }
 
     add(name: string, score: number) {
-        const entry: ScoreEntry = { name, score, timestamp: Date.now() };
-        this.scores.push(entry);
-        this.pendingScores.push(entry);
+        const nameLower = name.toLowerCase();
+
+        // Check if user already has a score
+        const existingIndex = this.scores.findIndex(s => s.name.toLowerCase() === nameLower);
+
+        if (existingIndex !== -1) {
+            // User exists - only update if new score is higher
+            if (score > this.scores[existingIndex].score) {
+                this.scores[existingIndex] = { name, score, timestamp: Date.now() };
+                this.pendingScores.push({ name, score, timestamp: Date.now() });
+            }
+            // If score is lower or equal, ignore
+        } else {
+            // New user - add their score
+            const entry: ScoreEntry = { name, score, timestamp: Date.now() };
+            this.scores.push(entry);
+            this.pendingScores.push(entry);
+        }
 
         // Keep scores sorted descending
         this.scores.sort((a, b) => b.score - a.score);

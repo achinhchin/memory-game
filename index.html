@@ -609,9 +609,11 @@
 
         .score-list-container {
             overflow-y: auto;
+            overflow-x: visible;
             flex-grow: 1;
             min-height: 200px;
-            padding-right: 10px;
+            padding: 15px 20px 0 20px;
+            margin: -15px -20px 0 -20px;
             /* Scrollbar styling */
             scrollbar-width: thin;
             scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
@@ -632,8 +634,10 @@
 
         .score-list {
             list-style: none;
-            padding: 0;
-            margin: 0;
+            padding: 0 15px;
+            /* Horizontal padding for shadow overflow */
+            margin: 0 -15px;
+            /* Compensate for padding */
         }
 
         .score-item {
@@ -663,7 +667,12 @@
 
         .score-item:hover {
             transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Hover for non-ranked items only */
+        .score-item:nth-child(n+4):hover {
+            background: rgba(255, 255, 255, 0.12);
         }
 
         /* Current Player Highlight - Card Background Only */
@@ -815,13 +824,52 @@
             color: #111 !important;
         }
 
-        body.light-theme .score-item:hover,
-        body.light-theme .score-item:nth-child(n):hover {
-            background: rgba(0, 0, 0, 0.08) !important;
+        /* Light mode hover - only for items 4th and beyond */
+        body.light-theme .score-item:nth-child(n+4):hover {
+            background: rgba(0, 0, 0, 0.06) !important;
+        }
+
+        /* Light mode hover for all - just shadow and transform */
+        body.light-theme .score-item:hover {
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12) !important;
         }
 
         body.light-theme .score-rank {
             color: #666 !important;
+        }
+
+        /* Light Mode: Top 3 Ranks with clearer backgrounds */
+        body.light-theme .score-item:nth-child(1) {
+            background: linear-gradient(90deg, rgba(255, 193, 7, 0.25), rgba(255, 243, 224, 0.3)) !important;
+            border-color: rgba(255, 193, 7, 0.5) !important;
+            box-shadow: 0 0 10px rgba(255, 193, 7, 0.2) !important;
+        }
+
+        body.light-theme .score-item:nth-child(2) {
+            background: linear-gradient(90deg, rgba(158, 158, 158, 0.25), rgba(238, 238, 238, 0.3)) !important;
+            border-color: rgba(158, 158, 158, 0.5) !important;
+            box-shadow: 0 0 10px rgba(158, 158, 158, 0.2) !important;
+        }
+
+        body.light-theme .score-item:nth-child(3) {
+            background: linear-gradient(90deg, rgba(205, 127, 50, 0.25), rgba(255, 224, 178, 0.3)) !important;
+            border-color: rgba(205, 127, 50, 0.5) !important;
+            box-shadow: 0 0 10px rgba(205, 127, 50, 0.2) !important;
+        }
+
+        body.light-theme .score-item:nth-child(1) .score-rank {
+            color: #d97706 !important;
+            /* Amber */
+        }
+
+        body.light-theme .score-item:nth-child(2) .score-rank {
+            color: #6b7280 !important;
+            /* Gray */
+        }
+
+        body.light-theme .score-item:nth-child(3) .score-rank {
+            color: #b45309 !important;
+            /* Bronze */
         }
 
         /* Keep Top 3 Ranks Gold/Silver/Bronze colors but ensure text is readable if needed */
